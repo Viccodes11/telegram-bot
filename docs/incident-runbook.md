@@ -150,7 +150,9 @@ infinite replay, and replaying every missed notification could create an
 unbounded backlog or flood a recovered chat. Instead the formatted message is
 parked on the local dead-letter queue (`DEAD_LETTER_FILE`, default
 `data/dead-letter.json`) and replayed on later cycles once Telegram accepts
-sends again. The log reports the sent/failed/skipped counts for that commit.
+sends again. See [Dead-Letter Queue documentation](dead-letter-queue.md) for details
+on file format, entry fields, inspection with `jq`, retry limits, and queue management.
+The log reports the sent/failed/skipped counts for that commit.
 
 Each individual Telegram send is bounded by `TELEGRAM_SEND_TIMEOUT_MS` (default
 `10000`). A send that exceeds this deadline is aborted and counted as a failure
