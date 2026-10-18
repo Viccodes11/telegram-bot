@@ -42,11 +42,11 @@ import {
   PAUSE_MESSAGES,
   RESUME_MESSAGES,
 } from "./i18n.js";
-import { RecentEventsStore, handleInlineQuery } from "./commands/inline.js";
-export { RecentEventsStore } from "./commands/inline.js";
+import { helpDetailMessage } from "./commands/help-detail.js";
+export { helpDetailMessage, COMMAND_DETAILS, type CommandDetail } from "./commands/help-detail.js";
 
 /** Shared metadata for handlers, help, and Telegram's command menu. */
-const COMMANDS = [
+export const COMMANDS = [
   { command: "start", description: COMMAND_DESCRIPTIONS.start, operatorOnly: false },
   { command: "help", description: COMMAND_DESCRIPTIONS.help, operatorOnly: false },
   { command: "status", description: COMMAND_DESCRIPTIONS.status, operatorOnly: false },
@@ -64,7 +64,7 @@ function visibleCommands(config?: BotConfig) {
   );
 }
 
-export function helpMessage(config: BotConfig): string {
+export function helpMessage(config?: BotConfig): string {
   return [
     HELP_TITLE,
     "",
@@ -612,7 +612,18 @@ export function registerCommandHandlers(
     },
 
     help: async (ctx) => {
-      await replyMarkdown(ctx, helpMessage(config));
+      const text = ctx.message?.text ?? "";
+      const spaceIndex = text.indexOf(" ");
+      const arg = (
+        typeof ctx.match === "string" && ctx.match.trim().length > 0
+          ? ctx.match.trim()
+          : (spaceIndex !== -1 ? text.slice(spaceIndex + 1).trim() : "")
+      );
+      if (arg) {
+        await replyMarkdown(ctx, helpDetailMessage(arg, config));
+      } else {
+        await replyMarkdown(ctx, helpMessage(config));
+      }
     },
 
     status: async (ctx) => {
