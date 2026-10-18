@@ -65,6 +65,7 @@ import {
   type DecodedEvent,
 } from "./decode.js";
 import { formatRpcTiming, RpcTiming, type RpcTimingSummary } from "./metrics.js";
+import { assertEventsResponse } from "./rpc-guard.js";
 
 /** Events per request. The RPC caps this; 200 is well inside it. */
 export const EVENT_PAGE_LIMIT = 200;
@@ -285,6 +286,7 @@ export async function paginatedGetEvents(
         ? server.getEvents({ filters, cursor, limit })
         : server.getEvents({ filters, startLedger: firstStartLedger, limit }),
     );
+    assertEventsResponse(response);
 
     // A malformed page (non-array `events`) is an empty page, not a crash.
     const rawEvents = Array.isArray(response?.events) ? response.events : [];
