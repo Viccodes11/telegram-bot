@@ -65,6 +65,7 @@ import {
   type DecodedEvent,
 } from "./decode.js";
 import { formatRpcTiming, RpcTiming, type RpcTimingSummary } from "./metrics.js";
+import { assertEventsResponse } from "./rpc-guard.js";
 import { formatScanJsonl } from "./scan-jsonl.js";
 
 /** Events per request. The RPC caps this; 200 is well inside it. */
